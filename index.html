@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>minigoogle</title>
+<style>
+:root{--bg:#fff;--tx:#202124;--mut:#70757a;--sn:#4d5156;--lk:#1a0dab;--bd:#dfe1e5;--sh:0 1px 6px rgba(32,33,36,.28);--btn:#f8f9fa;--bl:#1a73e8;--ok:#188038;--bad:#d93025;--hl:#e8f0fe;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#202124;--tx:#e8eaed;--mut:#9aa0a6;--sn:#bdc1c6;--lk:#8ab4f8;--bd:#5f6368;--sh:0 1px 6px rgba(0,0,0,.6);--btn:#303134;--bl:#8ab4f8;--ok:#81c995;--bad:#f28b82;--hl:#2b3a55}}
+:root[data-theme="dark"]{--bg:#202124;--tx:#e8eaed;--mut:#9aa0a6;--sn:#bdc1c6;--lk:#8ab4f8;--bd:#5f6368;--sh:0 1px 6px rgba(0,0,0,.6);--btn:#303134;--bl:#8ab4f8;--ok:#81c995;--bad:#f28b82;--hl:#2b3a55}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:arial,"Helvetica Neue",sans-serif}
+.h{display:none!important}
+.logo{font-family:"Product Sans",arial,sans-serif;font-weight:500;letter-spacing:-.04em;user-select:none;cursor:pointer;white-space:nowrap}
+.logo.big{font-size:clamp(48px,14vw,84px);margin-bottom:24px}
+.logo.sm{font-size:28px;margin-right:24px}
+.sb{display:flex;align-items:center;gap:12px;width:100%;max-width:584px;height:46px;border:1px solid var(--bd);border-radius:24px;padding:0 16px;background:var(--bg)}
+.sb:hover,.sb:focus-within{box-shadow:var(--sh);border-color:transparent}
+.sb svg{flex:none;fill:var(--mut)}
+.sb input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--tx);font-size:16px}
+.x{cursor:pointer;color:var(--mut);font-size:22px;line-height:1}
+#home{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px 8vh}
+.btns{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;justify-content:center}
+.btns button{background:var(--btn);border:1px solid var(--btn);border-radius:4px;color:var(--tx);font-size:14px;padding:0 16px;height:36px;cursor:pointer}
+.btns button:hover{border-color:var(--bd);box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.hint{margin-top:24px;font-size:13px;color:var(--mut);text-align:center}
+.hint a{color:var(--lk);cursor:pointer;margin:0 4px}
+header{display:flex;align-items:center;padding:20px 16px 0 20px;flex-wrap:wrap;gap:8px}
+.tabs{display:flex;gap:4px;padding:0 16px 0 20px;border-bottom:1px solid var(--bd);margin-top:8px;overflow-x:auto}
+.tab{padding:12px 14px;font-size:14px;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.on{color:var(--bl);border-color:var(--bl)}
+#out{padding:12px 16px 56px 20px;max-width:720px}
+.wide{max-width:900px!important}
+.stat{font-size:14px;color:var(--mut);margin:6px 0 18px}
+.sort{font-size:13px;color:var(--mut);margin-bottom:14px}
+.sort a{color:var(--lk);cursor:pointer;margin-left:10px}.sort a.on{color:var(--tx);font-weight:bold;cursor:default}
+.r{margin-bottom:26px}
+.src{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--tx)}
+.fav{width:26px;height:26px;border-radius:50%;background:var(--btn);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;color:var(--bl)}
+.src small{display:block;color:var(--mut);font-size:12px}
+.r h3{margin:4px 0 3px;font-size:20px;font-weight:400;color:var(--lk);cursor:pointer}
+.r h3:hover{text-decoration:underline}
+.r p{margin:0;font-size:14px;line-height:1.58;color:var(--sn)}
+.r b{color:var(--tx)}
+.bd{margin-top:6px;font-size:12px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
+.bd span{background:var(--btn);border-radius:10px;padding:2px 10px}
+.lucky{background:var(--hl);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.cols{grid-template-columns:1fr}}
+.box{border:1px solid var(--bd);border-radius:8px;padding:14px}
+.box h4{margin:0 0 2px;font-size:16px}.box .d{font-size:12.5px;color:var(--mut);margin-bottom:12px}
+.row{margin-bottom:12px;font-size:14px}
+.row .t{display:flex;justify-content:space-between;gap:8px}
+.bar{height:8px;border-radius:4px;background:var(--btn);margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.up{color:var(--ok);font-size:12px;white-space:nowrap}.dn{color:var(--bad);font-size:12px;white-space:nowrap}.eq{color:var(--mut);font-size:12px}
+.verdict{background:var(--hl);border-radius:8px;padding:12px 14px;margin-top:16px;font-size:14px;line-height:1.55}
+.ctl{display:flex;flex-wrap:wrap;gap:18px;font-size:14px;margin:6px 0 10px}
+.ctl label{display:flex;flex-direction:column;gap:2px}
+svg.g{width:100%;height:auto;max-height:340px}
+.edge{fill:none;stroke:var(--mut);stroke-width:1.5}
+.node{fill:var(--hl);stroke:var(--bl);stroke-width:2}
+.nt{fill:var(--tx);font-size:13px;font-weight:bold;text-anchor:middle;dominant-baseline:central}
+.nl{fill:var(--mut);font-size:11px;text-anchor:middle}
+.tw{overflow-x:auto;margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{color:var(--mut);font-weight:normal}
+.note{font-size:13px;color:var(--mut);margin:8px 0 0}
+</style>
+</head>
+<body>
+<div id="home">
+  <div class="logo big" id="lg1"></div>
+  <div class="sb"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><input id="q1" type="text" autocomplete="off" aria-label="Search"></div>
+  <div class="btns"><button id="b1">Minigoogle Search</button><button id="b2">I’m Feeling Lucky</button></div>
+  <div class="hint">Try:<a data-q="pizza">pizza</a><a data-q="pizza pune">pizza pune</a><a data-q="canteen">canteen</a><a data-q="food guide">food guide</a></div>
+</div>
+
+<div id="res" class="h">
+  <header>
+    <div class="logo sm" id="lg2"></div>
+    <div class="sb"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><input id="q2" type="text" autocomplete="off" aria-label="Search"><span class="x" id="clr">×</span></div>
+  </header>
+  <nav class="tabs"><div class="tab on" data-t="all">All</div><div class="tab" data-t="cmp">Old way vs PageRank</div><div class="tab" data-t="graph">Link graph</div></nav>
+  <div id="out"></div>
+</div>
+
+<script>
+var S=[
+ {n:"Pune Food Guide",u:"punefoodguide.in",b:"Your complete guide to food in Pune: restaurants, street food, cafes and bakeries. Our food guide lists the best food spots, from misal to biryani. Read the guide, and see pizza picks from Best Pizza Pune.",l:[1]},
+ {n:"Best Pizza Pune",u:"bestpizzapune.in",b:"Best pizza in Pune. We review pizza places across Pune and rate crust, cheese and toppings. Our pizza rankings cover wood-fired pizza and budget pizza for every pizza lover.",l:[0,2]},
+ {n:"College Canteen Blog",u:"collegecanteenblog.in",b:"Students share canteen food, cheap snacks and budget meals. The college canteen serves sandwiches, maggi, chai and sometimes pizza. Our blog picks the best canteen in town.",l:[1,3]},
+ {n:"Pizza House",u:"pizzahouse.in",b:"Pizza House serves wood-fired pizza, pasta and garlic bread. Fresh pizza, hot pizza and cheesy pizza straight from our oven. Visit Pizza House for pizza.",l:[1,4]},
+ {n:"Cheap Eats Pizza",u:"cheapeatspizza.in",b:"Affordable pizza deals, student pizza combos and cheap pizza offers. Cheap pizza, tasty pizza, pizza under 100 rupees. Cheap eats for everyone.",l:[1]},
+ {n:"Pizza Pizza",u:"pizzapizza.in",b:"Pizza pizza pizza! Pizza delivery, pizza offers, pizza combos, pizza pizza pizza. Order pizza pizza now. Pizza, pizza, pizza and more pizza.",l:[0]}
+];
+var N=S.length,R=[],tab="all",mode="pr",lucky=false;
+var $=function(i){return document.getElementById(i)};
+function logo(el){var c=["#4285f4","#ea4335","#fbbc05","#4285f4","#34a853","#ea4335","#fbbc05","#4285f4","#34a853","#ea4335"];el.innerHTML="minigoogle".split("").map(function(ch,i){return "<span style='color:"+c[i]+"'>"+ch+"</span>"}).join("")}
+logo($("lg1"));logo($("lg2"));
+function pr(d,k){var r=[],i,j,x;for(i=0;i<N;i++)r.push(1/N);
+ while(k-->0){var nr=[];for(i=0;i<N;i++)nr.push((1-d)/N);
+  for(i=0;i<N;i++)for(j=0;j<S[i].l.length;j++)nr[S[i].l[j]]+=d*r[i]/S[i].l.length;r=nr}
+ return r}
+function T(q){return q.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)}
+function cnt(i,t){var s=(S[i].n+" "+S[i].b).toLowerCase(),c=0;t.forEach(function(w){var m=s.match(new RegExp("\\b"+w+"\\b","g"));if(m)c+=m.length});return c}
+function hl(s,t){if(!t.length)return s;return s.replace(new RegExp("\\b("+t.join("|")+")\\b","gi"),"<b>$1</b>")}
+function inC(j){return S.filter(function(s){return s.l.indexOf(j)>-1}).length}
+function calc(){var d=$("d")?+$("d").value:.85,k=$("it")?+$("it").value:50;R=pr(d,k)}
+function data(){
+ var t=T($("q2").value),C=S.map(function(_,i){return cnt(i,t)});
+ var m=[];for(var i=0;i<N;i++)if(!t.length||C[i]>0)m.push(i);
+ var kw=m.slice().sort(function(a,b){return C[b]-C[a]||a-b}),p=m.slice().sort(function(a,b){return R[b]-R[a]});
+ return{t:t,C:C,m:m,kw:kw,p:p}}
+function render(){
+ var D=data(),h="",o=$("out");o.className=tab==="all"?"":"wide";
+ if(tab==="all")h=all(D);else if(tab==="cmp")h=cmp(D);else h=gr();
+ o.innerHTML=h;
+ if(tab==="graph"){calc();drawG();drawT()}
+}
+function all(D){
+ var ord=mode==="pr"?D.p:D.kw,h="";
+ if(lucky&&D.p.length)h+="<div class='lucky'>🍀 <b>I’m Feeling Lucky</b> would take you straight to <b>"+S[D.p[0]].n+"</b>, the top PageRank result.</div>";
+ h+="<div class='stat'>About "+D.m.length+" result"+(D.m.length===1?"":"s")+"</div>";
+ h+="<div class='sort'>Ranked by:<a data-m='pr' class='"+(mode==="pr"?"on":"")+"'>PageRank</a><a data-m='kw' class='"+(mode==="kw"?"on":"")+"'>Old way (keyword count)</a></div>";
+ if(!ord.length)return h+"<p>Your search did not match any pages.</p>";
+ ord.forEach(function(i){
+  h+="<div class='r'><div class='src'><div class='fav'>"+S[i].n[0]+"</div><div>"+S[i].n+"<small>https://"+S[i].u+"</small></div></div>"+
+  "<h3>"+hl(S[i].n,D.t)+"</h3><p>"+hl(S[i].b,D.t)+"</p>"+
+  "<div class='bd'><span>PageRank "+R[i].toFixed(4)+" · #"+(D.p.indexOf(i)+1)+"</span><span>Keyword count "+D.C[i]+" · #"+(D.kw.indexOf(i)+1)+"</span><span>Linked from "+inC(i)+" site(s)</span></div></div>"});
+ return h}
+function cmp(D){
+ if(!D.m.length)return "<p>Your search did not match any pages.</p>";
+ var mc=Math.max.apply(null,D.m.map(function(i){return D.C[i]}))||1,mp=Math.max.apply(null,D.m.map(function(i){return R[i]}));
+ var L="",P="";
+ D.kw.forEach(function(i,k){L+="<div class='row'><div class='t'><span>"+(k+1)+". "+S[i].n+"</span><b>"+D.C[i]+"×</b></div><div class='bar'><i style='width:"+(D.C[i]/mc*100)+"%;background:#ea4335'></i></div></div>"});
+ D.p.forEach(function(i,k){var ch=D.kw.indexOf(i)-k,tag=ch>0?"<span class='up'>▲ "+ch+"</span>":ch<0?"<span class='dn'>▼ "+(-ch)+"</span>":"<span class='eq'>–</span>";
+  P+="<div class='row'><div class='t'><span>"+(k+1)+". "+S[i].n+"</span><span>"+tag+" <b>"+R[i].toFixed(4)+"</b></span></div><div class='bar'><i style='width:"+(R[i]/mp*100)+"%;background:#34a853'></i></div></div>"});
+ var a=D.kw[0],b=D.p[0],v="<b>Old way:</b> <b>"+S[a].n+"</b> is #1 because the search words appear "+D.C[a]+" times on it, and a page can win just by repeating a word. ";
+ v+=a===b?"<b>PageRank</b> agrees here.":"<b>PageRank:</b> <b>"+S[b].n+"</b> is #1 because "+inC(b)+" other site(s) link to it, and links from well-linked pages count for more. <b>"+S[a].n+"</b> has "+inC(a)+" inbound link(s), so it drops to #"+(D.p.indexOf(a)+1)+".";
+ return "<div class='stat'>Same search, two ways of ranking "+D.m.length+" matching page(s). Red bars count word repeats; green bars show link-based PageRank. Arrows show how far a page moves compared with the old way.</div>"+
+  "<div class='cols'><div class='box'><h4>Old way: keyword frequency</h4><div class='d'>Ranks by how many times your search words appear on the page</div>"+L+"</div>"+
+  "<div class='box'><h4>PageRank</h4><div class='d'>Ranks by incoming links and the importance of the linking pages</div>"+P+"</div></div><div class='verdict'>"+v+"</div>"}
+function gr(){return "<div class='stat'>The six sites and their links (all pages, whatever you searched).</div><svg class='g' id='g' viewBox='0 0 420 330' role='img' aria-label='Link graph'></svg>"+
+ "<div class='ctl'><label>Damping factor d = <b id='dv'>0.85</b><input type='range' id='d' min='0.5' max='0.95' step='0.05' value='0.85'></label><label>Iterations = <b id='iv'>50</b><input type='range' id='it' min='0' max='50' value='50'></label></div>"+
+ "<div class='tw'><table id='tb'></table></div><p class='note'>PR(p) = (1 − d)/N + d × Σ PR(q)/L(q), summed over every page q that links to p. Everyone starts at 1/6. At 0 iterations all scores are equal.</p>"}
+function drawG(){
+ var P=[],i,h="";for(i=0;i<N;i++){var a=(-90+i*60)*Math.PI/180;P.push([210+118*Math.cos(a),165+118*Math.sin(a)])}
+ var rr=R.map(function(x){return 14+x*75});
+ h+="<defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='var(--mut)'/></marker></defs>";
+ S.forEach(function(s,a){s.l.forEach(function(b){var dx=P[b][0]-P[a][0],dy=P[b][1]-P[a][1],L=Math.sqrt(dx*dx+dy*dy),ux=dx/L,uy=dy/L,
+  x1=P[a][0]+ux*rr[a],y1=P[a][1]+uy*rr[a],x2=P[b][0]-ux*(rr[b]+5),y2=P[b][1]-uy*(rr[b]+5),mx=(x1+x2)/2-uy*16,my=(y1+y2)/2+ux*16;
+  h+="<path class='edge' d='M"+x1+" "+y1+" Q"+mx+" "+my+" "+x2+" "+y2+"' marker-end='url(#ar)'/>"})});
+ for(i=0;i<N;i++)h+="<circle class='node' cx='"+P[i][0]+"' cy='"+P[i][1]+"' r='"+rr[i]+"'/><text class='nt' x='"+P[i][0]+"' y='"+P[i][1]+"'>"+(i+1)+"</text><text class='nl' x='"+P[i][0]+"' y='"+(P[i][1]+rr[i]+12)+"'>"+(R[i]*100).toFixed(1)+"%</text>";
+ $("g").innerHTML=h}
+function drawT(){
+ var o=S.map(function(_,i){return i}).sort(function(a,b){return R[b]-R[a]}),h="<tr><th>Rank</th><th>#</th><th>Website</th><th>Links to</th><th>Inbound</th><th>PageRank</th></tr>";
+ o.forEach(function(i,p){h+="<tr><td>"+(p+1)+"</td><td>"+(i+1)+"</td><td>"+S[i].n+"</td><td>"+S[i].l.map(function(x){return x+1}).join(", ")+"</td><td>"+inC(i)+"</td><td><b>"+R[i].toFixed(4)+"</b></td></tr>"});
+ $("tb").innerHTML=h}
+function go(q,lk){
+ lucky=!!lk;$("q2").value=q;$("home").classList.add("h");$("res").classList.remove("h");
+ tab="all";[].forEach.call(document.querySelectorAll(".tab"),function(e){e.classList.toggle("on",e.dataset.t==="all")});
+ calc();render();$("q2").blur()}
+function home(){$("res").classList.add("h");$("home").classList.remove("h");$("q1").value="";$("q1").focus()}
+$("b1").onclick=function(){go($("q1").value)};
+$("b2").onclick=function(){go($("q1").value,1)};
+$("q1").onkeydown=function(e){if(e.key==="Enter")go(this.value)};
+$("q2").oninput=function(){lucky=false;render()};
+$("q2").onkeydown=function(e){if(e.key==="Enter")this.blur()};
+$("clr").onclick=function(){$("q2").value="";lucky=false;render();$("q2").focus()};
+$("lg2").onclick=home;
+document.querySelector(".hint").onclick=function(e){var q=e.target.dataset.q;if(q)go(q)};
+document.querySelector(".tabs").onclick=function(e){var t=e.target.dataset.t;if(!t)return;tab=t;[].forEach.call(this.children,function(c){c.classList.toggle("on",c===e.target)});render()};
+$("out").onclick=function(e){var m=e.target.dataset.m;if(m){mode=m;render()}};
+$("out").oninput=function(e){if(e.target.id==="d"||e.target.id==="it"){$("dv").textContent=(+$("d").value).toFixed(2);$("iv").textContent=$("it").value;calc();drawG();drawT()}};
+calc();
+</script>
+</body>
+</html>
